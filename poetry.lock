@@ -305,6 +305,20 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "types-requests"
+version = "2.31.0.8"
+description = "Typing stubs for requests"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "types-requests-2.31.0.8.tar.gz", hash = "sha256:e1b325c687b3494a2f528ab06e411d7092cc546cc9245c000bacc2fca5ae96d4"},
+    {file = "types_requests-2.31.0.8-py3-none-any.whl", hash = "sha256:39894cbca3fb3d032ed8bdd02275b4273471aa5668564617cc1734b0a65ffdf8"},
+]
+
+[package.dependencies]
+urllib3 = ">=2"
+
+[[package]]
 name = "typing-extensions"
 version = "4.8.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -335,4 +349,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c555d39942a0f2d59cb400cd109833127d34e4ba31b94fac38aee2794294d981"
+content-hash = "f0f524e27e79d20e6a9712b652888ef401b36bf8d810411fab2804db5f962e15"

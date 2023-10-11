@@ -1,3 +1,6 @@
+import time
+from requests import post, RequestException, Response
+
 from xgress_scraper import Database
 
 
@@ -5,13 +8,38 @@ class XgressScraper:
 
     def __init__(self) -> None:
         self.host: str = "https://xgress.com/api/v3"
-        self.database = Database()
+        self.database: Database = Database()
 
-    def add_portals(self, portals: list[dict]) -> None:
+    def search_portals(self, query: str) -> None:
+        offset: int = 0
+
+        while True:
+            try:
+                response: Response = post(self.host, {'requests': 'portal_search', 'args': {'portal': query, 'limit': 10000, 'offset': offset}})
+                search_result: dict = response.json()['result']
+
+                if search_result['total'] == 0:
+                    break
+
+                self.save_portals(search_result['portals_search'])
+                offset += search_result['count']
+
+                time.sleep(15)
+
+            except RequestException:
+                break
+
+        if self.database.transactions > 0:
+            save_transactions = self.database.end_transaction()
+            print(save_transactions)
+
+        print('No result found for this query')
+
+    def save_portals(self, portals: list[dict]) -> None:
         portals_tuples = [self._process_portal(portal) for portal in portals]
+        begin_transaction = self.database.begin_transaction(portals_tuples)
 
-        self.database.begin_transaction(portals_tuples)
-        self.database.end_transaction()
+        print(begin_transaction)
 
     @staticmethod
     def _process_portal(portal: dict) -> tuple:
