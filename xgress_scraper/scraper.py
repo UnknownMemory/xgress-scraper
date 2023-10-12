@@ -30,8 +30,8 @@ class XgressScraper:
                 break
             try:
                 response: Response = post(self.host, json={'request': 'portals_search', 'args': {'portal': query, 'limit': 10000, 'offset': offset}}, headers=self.headers)
-                search_result: dict = response.json()['result']
 
+                search_result: dict = response.json()['result']
                 if search_result['count'] == 0:
                     break
 
@@ -60,16 +60,25 @@ class XgressScraper:
     @staticmethod
     def _process_portal(portal: dict) -> tuple:
         keys = ['name', 'pguid', 'short', 'img', 'address', 'description', 'late6', 'lnge6']
-        previous_key: str = ''
+        current_key: str = 'name'
         portal_tuple: tuple = ()
 
         for key, value in portal.items():
-            if previous_key and key not in ['location', 'status'] and key != keys[keys.index(previous_key) + 1]:
-                portal_tuple += ('',)
+
+            key = key.replace(' ', '').lower()
+
+            if key in ['location', 'status']:
+                continue
+            if current_key != key:
+                while current_key != key:
+                    portal_tuple += ('',)
+                    current_key = keys[keys.index(current_key) + 1]
             if key in ['late6', 'lnge6']:
                 portal_tuple += (value / 1e6,)
-            elif key not in ['location', 'status']:
+            else:
                 portal_tuple += (value,)
 
-            previous_key = key if key in keys else ''
+            if current_key != 'lnge6':
+                current_key = keys[keys.index(current_key) + 1]
+
         return portal_tuple
