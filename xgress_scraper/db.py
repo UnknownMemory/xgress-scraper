@@ -34,14 +34,14 @@ class Database:
         self.cursor.execute('''CREATE TABLE IF NOT EXISTS location (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            pguid TEXT NOT NULL UNIQUE,
+            pguid TEXT NOT NULL UNIQUE ON CONFLICT IGNORE,
             short TEXT NOT NULL,
             img TEXT NOT NULL,
             address TEXT NOT NULL,
             description TEXT,
-            lon REAL NOT NULL,
             lat REAL NOT NULL,
-            UNIQUE(lon, lat) ON CONFLICT IGNORE)
+            lon REAL NOT NULL,
+            UNIQUE(lat, lon) ON CONFLICT IGNORE)
             ''')
         self.con.commit()
 
