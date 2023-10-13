@@ -1,4 +1,3 @@
-import time
 from requests import post, RequestException, Response
 
 from xgress_scraper import Database
@@ -39,8 +38,6 @@ class XgressScraper:
                 total = search_result['total']
                 offset += search_result['count']
 
-                time.sleep(15)
-
             except RequestException as e:
                 print(e)
                 break
@@ -48,12 +45,13 @@ class XgressScraper:
         if self.database.transactions > 0:
             save_transactions = self.database.end_transaction()
             print(save_transactions)
-
-        print('No result found for this query')
+        else:
+            print('No result found for this query')
 
     def save_portals(self, portals: list[dict]) -> None:
         portals_tuples = [self._process_portal(portal) for portal in portals]
-        begin_transaction = self.database.begin_transaction(portals_tuples)
+
+        begin_transaction = self.database.begin_transaction(list(set(portals_tuples)))
 
         print(begin_transaction)
 
